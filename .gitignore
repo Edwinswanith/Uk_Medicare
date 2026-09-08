@@ -1,0 +1,33 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+artifacts/
+.playwright-mcp/
+Feedback Cards/
+package-lock.json.bak
+
+# Keep only application assets under public; generated image variants remain local.
+public/*
+!public/hero_bg_davinci_sheth.png
+!public/robots.txt
+!public/sitemap.xml
+!public/sheth_caduceus_emblem.png
+!public/images/
+public/images/*
+!public/images/sheth_robotic_surgical_team.png
+!public/images/youtube_thumb_Q__rvX_EEGQ.jpg
+!public/treatments/
+!public/treatments/*
+!public/legacy-asgbi.jpg
+!public/legacy-cfa-certificate-2023-h-sheth.jpg
+!public/legacy-clementine-churchill-hospital.jpg
+!public/legacy-nhs-london-north-west.jpg
+!public/legacy-nhs-royal-free-london.jpg
+!public/legacy-profile-prof-hemant-sheth.png
+!public/legacy-royal-college-of-surgeons.jpg
+!public/legacy-ucl.jpg
+!public/location-clementine-reference.png
+!public/location-spire-bushey.jpg
+!public/location-wellington-elstree.jpg

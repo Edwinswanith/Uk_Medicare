@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Manrope', Arial, sans-serif;
+    color: #1e293b;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  @media (min-width: 768px) {
+    body {
+      font-size: 1.0625rem;
+    }
+  }
+}
+
+@layer components {
+  .text-eyebrow {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(0.75rem, 0.72rem + 0.14vw, 0.8125rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .text-display {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(3.4rem, 5vw, 5.25rem);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .text-page-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(2.65rem, 4.2vw, 4.4rem);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .text-section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(2.15rem, 3.2vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .text-subsection-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1.45rem, 1.9vw, 1.9rem);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .text-lead {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(1.0625rem, 1rem + 0.45vw, 1.3rem);
+    font-weight: 400;
+    line-height: 1.62;
+    text-wrap: pretty;
+  }
+
+  .text-body {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    font-weight: 400;
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+
+  .text-body-small {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(0.9375rem, 0.9rem + 0.16vw, 1rem);
+    font-weight: 400;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .text-meta {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(0.875rem, 0.84rem + 0.14vw, 0.9375rem);
+    font-weight: 500;
+    line-height: 1.48;
+  }
+
+  .text-caption {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .text-button {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(0.95rem, 0.92rem + 0.14vw, 1rem);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .text-form-label {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .text-form-help {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(0.875rem, 0.84rem + 0.14vw, 0.9375rem);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .text-testimonial-quote {
+    font-family: 'Manrope', Arial, sans-serif;
+    font-size: clamp(1.3rem, 1.7vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.5;
+    text-wrap: balance;
+  }
+}
+
+/* Custom utilities for luxury healthcare aesthetics */
+.bg-radial-gradient {
+  background: radial-gradient(circle at 50% 20%, rgba(13, 148, 136, 0.15) 0%, rgba(11, 29, 58, 0.98) 70%, #07162c 100%);
+}
+
+.card-shadow {
+  box-shadow: 0 10px 30px -5px rgba(15, 39, 77, 0.08), 0 4px 10px -2px rgba(15, 39, 77, 0.04);
+}
+
+.card-shadow-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-shadow-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(15, 39, 77, 0.15), 0 8px 16px -4px rgba(15, 39, 77, 0.08);
+}
+
+.logo-ticker {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.logo-ticker-track {
+  animation: logo-ticker-scroll 26s linear infinite;
+}
+
+.logo-ticker:hover .logo-ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes logo-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-ticker-track {
+    animation: none;
+  }
+}
+
+/* Handwritten card paper texture effect */
+.paper-card {
+  background: #fffdf9;
+  background-image: 
+    linear-gradient(90deg, rgba(220, 210, 190, 0.15) 1px, transparent 0),
+    linear-gradient(rgba(220, 210, 190, 0.15) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
