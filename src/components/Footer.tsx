@@ -2,7 +2,7 @@ import React from 'react';
 import { Phone, ChevronRight, AlertTriangle } from 'lucide-react';
 import { professionalIdentity, getVerified } from '../data/professionalIdentity';
 import { contactInfo, getVerifiedContact } from '../data/contactInfo';
-import { clinicLocations } from '../data/clinics';
+import { clinicLocations, getClinicAvailabilitySummary } from '../data/clinics';
 
 interface FooterProps {
   onOpenBooking: () => void;
@@ -30,7 +30,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
   const navLinks = [
     { label: 'About Prof. Sheth', href: '#about' },
     { label: 'Robotic Surgery', href: '#robotic' },
-    { label: 'Treatments & Specialties', href: '#treatments' },
+    { label: 'Treatments & Specialties', href: '/treatments' },
     { label: 'Locations', href: '#clinics' },
     { label: 'Patient Info', href: '#patient-info' },
   ];
@@ -87,10 +87,21 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
             <h4 className="font-serif font-bold text-[15px] text-white uppercase tracking-[0.08em]">
               Practice Locations
             </h4>
-            <ul className="space-y-1.5 text-body-small text-slate-300">
-              {clinicLocations.map((clinic) => (
-                <li key={clinic.id}>{clinic.name}</li>
-              ))}
+            <ul className="space-y-2 text-body-small text-slate-300">
+              {clinicLocations.map((clinic) => {
+                const availability = getClinicAvailabilitySummary(clinic);
+
+                return (
+                  <li key={clinic.id}>
+                    <a href="#clinics" className="block rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2 transition hover:border-teal-400/40 hover:bg-white/[0.06]">
+                      <span className="block font-bold text-white">{clinic.shortName}</span>
+                      <span className="mt-0.5 block text-caption text-slate-400">
+                        {availability.join('; ')}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
 
             {verifiedPhone && (

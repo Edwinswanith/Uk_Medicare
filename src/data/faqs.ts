@@ -55,8 +55,8 @@ export const allFaqs: FAQItem[] = [
     id: "faq-6",
     category: "fees",
     question: "Can I get an all-inclusive package price for my surgery?",
-    answer: "Yes. For self-pay patients, our partner hospitals (The Clementine Churchill, Spire Bushey, and The Wellington Hospital) offer fixed-price surgery packages. These all-inclusive quotes encompass surgeon fees, anaesthetist fees, theatre costs, hospital accommodation, standard medications, and routine post-operative follow-up visits.",
-    keyTakeaway: "Fixed all-inclusive hospital packages protect you from unexpected surgical or hospital expenses."
+    answer: "For self-pay patients, hospital package pricing can be discussed through the private practice and the relevant partner clinic or hospital. The final quote depends on the procedure, hospital site, anaesthetic requirements, and any diagnostic tests needed.",
+    keyTakeaway: "Ask for a written package quote for your selected clinic and procedure."
   },
   {
     id: "faq-7",

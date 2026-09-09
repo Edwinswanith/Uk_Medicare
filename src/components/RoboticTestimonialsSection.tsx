@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -11,10 +11,15 @@ import {
   featuredPatientTestimonials,
   patientTestimonials,
 } from '../data/patientTestimonials';
+import { patientFeedbackCards } from '../data/patientFeedbackCards';
+import { PatientFeedbackCardsGallery } from './PatientFeedbackCardsGallery';
 
 interface RoboticTestimonialsSectionProps {
   onSubmitTestimonial?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
+
+const AUTO_SLIDE_MS = 5600;
+const SWIPE_THRESHOLD_PX = 48;
 
 const toneStyles = {
   surgery: 'bg-sky-50 text-sky-800 border-sky-200',
@@ -61,10 +66,11 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const totalSlides = featuredPatientTestimonials.length;
 
   useEffect(() => {
-    if (!modalOpen) return;
+    if (!modalOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -94,14 +100,40 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
   }, []);
 
   useEffect(() => {
-    if (modalOpen || isPaused || totalSlides <= 1) return;
+    if (modalOpen || isPaused || totalSlides <= 1) return undefined;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reducedMotion) return;
+    if (reducedMotion) return undefined;
 
-    const timer = window.setInterval(() => moveSlide('next'), 4300);
+    const timer = window.setInterval(() => moveSlide('next'), AUTO_SLIDE_MS);
     return () => window.clearInterval(timer);
   }, [isPaused, modalOpen, moveSlide, totalSlides]);
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    touchStartRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+    setIsPaused(true);
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const start = touchStartRef.current;
+    const touch = event.changedTouches[0];
+    touchStartRef.current = null;
+
+    window.setTimeout(() => setIsPaused(false), 300);
+
+    if (!start || !touch) return;
+
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    const isHorizontalSwipe =
+      Math.abs(deltaX) >= SWIPE_THRESHOLD_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+    if (!isHorizontalSwipe) return;
+
+    moveSlide(deltaX < 0 ? 'next' : 'previous');
+  };
 
   return (
     <>
@@ -150,6 +182,8 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
               className="relative h-[330px] min-w-0 overflow-hidden sm:h-[340px] lg:h-[324px]"
               aria-live="polite"
               aria-label="Patient testimonial carousel"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
             >
               {featuredPatientTestimonials.map((testimonial, index) => {
                 const position = getRelativeSlidePosition(index, activeIndex, totalSlides);
@@ -259,7 +293,7 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
             role="dialog"
             aria-modal="true"
             aria-labelledby="all-testimonials-title"
-            className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white text-slate-800 shadow-2xl"
+            className="relative flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden rounded-xl bg-white text-slate-800 shadow-2xl"
           >
             <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-[#064a5f] px-5 py-5 text-white sm:px-7">
               <div>
@@ -269,6 +303,9 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
                 <h3 id="all-testimonials-title" className="text-subsection-title mt-1">
                   Patient Testimonials
                 </h3>
+                <p className="mt-2 text-sm text-sky-100">
+                  {patientTestimonials.length} message testimonials and {patientFeedbackCards.length} feedback card pages.
+                </p>
               </div>
 
               <button
@@ -315,6 +352,10 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
                   </article>
                 ))}
               </div>
+
+              <PatientFeedbackCardsGallery
+                className="mt-9 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
+              />
             </div>
           </section>
         </div>

@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export interface TreatmentCardData {
   id: string;
+  detailId: string;
   category: string;
   title: string;
   image: string;
@@ -13,6 +14,7 @@ export interface TreatmentCardData {
 const TREATMENTS: TreatmentCardData[] = [
   {
     id: 'gallbladder',
+    detailId: 'laparoscopic-cholecystectomy',
     category: 'HEPATOBILIARY',
     title: 'Gallbladder & Gallstones',
     image: '/treatments/gallbladder-gallstones.jpg',
@@ -21,6 +23,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'reflux',
+    detailId: 'anti-reflux-surgery',
     category: 'UPPER GI',
     title: 'Reflux & Hiatus Hernia',
     image: '/treatments/reflux-hiatus-hernia.jpg',
@@ -29,6 +32,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'hernia',
+    detailId: 'laparoscopic-hernia-repair',
     category: 'HERNIA SURGERY',
     title: 'Hernia Repair',
     image: '/treatments/hernia-repair.jpg',
@@ -37,6 +41,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'liver-hpb',
+    detailId: 'laparoscopic-liver-surgery',
     category: 'HEPATOBILIARY',
     title: 'Liver & HPB Surgery',
     image: '/treatments/liver-hpb-surgery.jpg',
@@ -45,6 +50,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'endoscopy',
+    detailId: 'upper-gi-endoscopy',
     category: 'DIAGNOSTICS',
     title: 'Upper GI Endoscopy',
     image: '/treatments/upper-gi-endoscopy.jpg',
@@ -53,6 +59,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'appendix',
+    detailId: 'laparoscopic-appendicectomy',
     category: 'GENERAL LAPAROSCOPIC SURGERY',
     title: 'Appendix & Laparoscopic Surgery',
     image: '/treatments/appendix-laparoscopic-surgery.jpg',
@@ -62,10 +69,14 @@ const TREATMENTS: TreatmentCardData[] = [
 ];
 
 interface TreatmentsCarouselProps {
-  onSelectTreatment: (treatmentTitle: string) => void;
+  onViewAllTreatments: () => void;
+  onViewTreatment: (treatmentId: string) => void;
 }
 
-export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({ onSelectTreatment }) => {
+export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({
+  onViewAllTreatments,
+  onViewTreatment,
+}) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -199,7 +210,7 @@ export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({ onSelect
         <div className="flex items-center justify-between sm:justify-end gap-3 mb-3 sm:mb-4 px-1">
           <button
             type="button"
-            onClick={() => onSelectTreatment('All Treatments')}
+            onClick={onViewAllTreatments}
             className="text-button inline-flex items-center font-semibold font-sans text-sky-700 hover:text-sky-900 transition-colors group sm:mr-1.5"
           >
             <span>View all treatments</span>
@@ -248,7 +259,15 @@ export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({ onSelect
           {TREATMENTS.map((treatment) => (
             <article
               key={treatment.id}
-              onClick={() => onSelectTreatment(treatment.title)}
+              onClick={() => onViewTreatment(treatment.detailId)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onViewTreatment(treatment.detailId);
+                }
+              }}
+              role="button"
+              tabIndex={0}
               className="snap-start flex-shrink-0 w-[290px] sm:w-[295px] md:w-[318px] bg-white rounded-[18px] border border-[#E3EDF3] shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:-translate-y-1 hover:border-sky-300 hover:shadow-[0_12px_28px_rgba(2,132,199,0.09)] transition-all duration-300 ease-out flex flex-col justify-between group cursor-pointer overflow-hidden"
               style={{
                 scrollSnapAlign: 'start',
@@ -298,7 +317,7 @@ export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({ onSelect
 
                 {/* Card CTA Link: Consistently anchored at the bottom */}
                 <div className="text-button mt-3 pt-3 border-t border-slate-100 flex items-center justify-between font-sans font-semibold text-[#0284c7] group-hover:text-[#0369a1] transition-colors">
-                  <span>Enquire about this</span>
+                  <span>View details</span>
                   <span className="inline-block transform group-hover:translate-x-1 transition-transform duration-300 text-sm">
                     &rarr;
                   </span>

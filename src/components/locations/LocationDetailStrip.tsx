@@ -1,14 +1,19 @@
 import React from 'react';
-import { Building2, CalendarDays, MapPin, Navigation } from 'lucide-react';
-import { ClinicLocation } from '../../data/clinics';
+import { Building2, CalendarDays, Clock3, MapPin, Navigation } from 'lucide-react';
+import {
+  ClinicAvailabilityFilter,
+  ClinicLocation,
+  getClinicAvailability,
+} from '../../data/clinics';
 
 interface LocationDetailStripProps {
+  activeFilter: ClinicAvailabilityFilter;
   clinic: ClinicLocation | null;
   onOpenBooking: (clinicId?: string) => void;
 }
 
 const getConsultationNote = (clinic: ClinicLocation) =>
-  `Consultations can be requested at ${clinic.name}. Appointment availability is confirmed when the consultation request is reviewed.`;
+  `Choose ${clinic.shortName} if these published consultation times match your preference. Appointment availability is confirmed when the request is reviewed.`;
 
 const clinicImageById: Partial<Record<string, string>> = {
   'clementine-churchill': '/location-clementine-reference.png',
@@ -17,12 +22,16 @@ const clinicImageById: Partial<Record<string, string>> = {
 };
 
 export const LocationDetailStrip: React.FC<LocationDetailStripProps> = ({
+  activeFilter,
   clinic,
   onOpenBooking,
-}) => (
-  <div className="rounded-[22px] border border-white/80 bg-white/[0.92] p-4 shadow-[0_20px_60px_rgba(53,91,122,0.18)] backdrop-blur sm:p-5">
-    {clinic ? (
-      <div className="grid gap-5 lg:grid-cols-[220px_minmax(250px,1fr)_minmax(360px,1.2fr)_auto] lg:items-center">
+}) => {
+  const availability = clinic ? getClinicAvailability(clinic, activeFilter) : [];
+
+  return (
+    <div className="rounded-[22px] border border-white/80 bg-white/[0.92] p-4 shadow-[0_20px_60px_rgba(53,91,122,0.18)] backdrop-blur sm:p-5">
+      {clinic ? (
+        <div className="grid gap-5 xl:grid-cols-[210px_minmax(230px,0.9fr)_minmax(300px,1.1fr)_auto] xl:items-center">
         <div className="relative h-28 overflow-hidden rounded-2xl bg-[#dceaf3]">
           {clinicImageById[clinic.id] ? (
             <img
@@ -52,7 +61,7 @@ export const LocationDetailStrip: React.FC<LocationDetailStripProps> = ({
 
         <div>
           <p className="text-eyebrow text-red-500">
-            Selected hospital
+            Selected clinic
           </p>
           <h3 className="text-subsection-title mt-2 text-navy-900">
             {clinic.shortName}
@@ -65,11 +74,33 @@ export const LocationDetailStrip: React.FC<LocationDetailStripProps> = ({
           </p>
         </div>
 
-        <div className="text-body-small border-slate-200 text-[#5f7088] lg:border-l lg:pl-8">
-          {getConsultationNote(clinic)}
+        <div className="space-y-3 border-slate-200 text-[#5f7088] xl:border-l xl:pl-8">
+          <div>
+            <p className="text-eyebrow text-[#294363]">
+              Doctor available
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {availability.map((period) => (
+                <span
+                  key={period.id}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-extrabold uppercase tracking-[0.08em] ${
+                    period.filter === 'alternate-thursday'
+                      ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
+                      : 'bg-slate-100 text-[#294363]'
+                  }`}
+                >
+                  <Clock3 className="h-3.5 w-3.5" />
+                  {period.day} - {period.time}
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="text-body-small">
+            {getConsultationNote(clinic)}
+          </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
           <a
             href={clinic.directionsUrl}
             target="_blank"
@@ -89,9 +120,9 @@ export const LocationDetailStrip: React.FC<LocationDetailStripProps> = ({
             <span>Request a consultation here</span>
           </button>
         </div>
-      </div>
-    ) : (
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-eyebrow text-red-500">
             Select a hospital
@@ -103,7 +134,8 @@ export const LocationDetailStrip: React.FC<LocationDetailStripProps> = ({
         <p className="text-meta font-semibold text-slate-500">
           Appointment availability is confirmed during booking.
         </p>
-      </div>
-    )}
-  </div>
-);
+        </div>
+      )}
+    </div>
+  );
+};

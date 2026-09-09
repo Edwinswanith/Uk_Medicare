@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, CheckCircle2, ArrowRight } from 'lucide-react';
-import { clinicLocations } from '../data/clinics';
+import {
+  clinicLocations,
+  formatClinicAvailability,
+  getClinicAvailabilitySummary,
+} from '../data/clinics';
 import { contactInfo, getVerifiedContact } from '../data/contactInfo';
 
 interface ConsultationModalProps {
@@ -25,7 +29,7 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [preferredDays, setPreferredDays] = useState('Any weekday');
+  const [preferredDays, setPreferredDays] = useState('Any listed clinic time');
   const [insurerName, setInsurerName] = useState('Bupa');
   const [authCode, setAuthCode] = useState('');
   const [notes, setNotes] = useState('');
@@ -44,6 +48,7 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
 
     const matchingClinic = clinicLocations.find((clinic) => clinic.id === preselectedClinicId);
     setSelectedHospital(matchingClinic?.name ?? clinicLocations[0].name);
+    setPreferredDays('Any listed clinic time');
     setProcedure(preselectedProcedure || 'Robotic Surgery Assessment');
   }, [isOpen, preselectedClinicId, preselectedProcedure]);
 
@@ -121,6 +126,8 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
   const labelClass = 'text-form-label block text-slate-700 mb-1.5';
   const inputClass = 'w-full text-base leading-6 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#294363]';
   const compactInputClass = 'w-full text-base leading-6 p-3 rounded-lg border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#294363]';
+  const selectedClinic =
+    clinicLocations.find((clinic) => clinic.name === selectedHospital) ?? clinicLocations[0];
 
   return (
     <div
@@ -209,12 +216,15 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
                 <select
                   id="consult-hospital"
                   value={selectedHospital}
-                  onChange={(e) => setSelectedHospital(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedHospital(e.target.value);
+                    setPreferredDays('Any listed clinic time');
+                  }}
                   className={`${inputClass} font-medium`}
                 >
                   {clinicLocations.map((clinic) => (
                     <option key={clinic.id} value={clinic.name}>
-                      {clinic.name} ({clinic.postcode})
+                      {clinic.shortName} ({clinic.postcode}) - {getClinicAvailabilitySummary(clinic).join('; ')}
                     </option>
                   ))}
                 </select>
@@ -332,10 +342,12 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
                       onChange={(e) => setPreferredDays(e.target.value)}
                       className={inputClass}
                     >
-                      <option value="Any weekday">Any weekday</option>
-                      <option value="Wednesday afternoon">Wednesday afternoon (Clementine Churchill)</option>
-                      <option value="Tuesday evening">Tuesday evening (Spire Bushey)</option>
-                      <option value="Friday morning">Friday morning (Clementine Churchill)</option>
+                      <option value="Any listed clinic time">Any listed time at selected clinic</option>
+                      {selectedClinic.availability.map((period) => (
+                        <option key={period.id} value={formatClinicAvailability(period)}>
+                          {formatClinicAvailability(period)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -372,7 +384,14 @@ export const ConsultationModal: React.FC<ConsultationModalProps> = ({
                   Thank You, {fullName}
                 </h4>
                 <p className="text-body-small text-slate-600 max-w-md mx-auto">
-                  Your enquiry for <strong>{procedure}</strong> at <strong>{selectedHospital}</strong> has been submitted.
+                  Your enquiry for <strong>{procedure}</strong> at <strong>{selectedHospital}</strong>
+                  {preferredDays !== 'Any listed clinic time' ? (
+                    <>
+                      {' '}
+                      on <strong>{preferredDays}</strong>
+                    </>
+                  ) : null}{' '}
+                  has been submitted.
                 </p>
               </div>
 

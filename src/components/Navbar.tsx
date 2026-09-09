@@ -3,30 +3,44 @@ import { Menu, X } from 'lucide-react';
 
 interface NavBarProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
   onOpenBooking: () => void;
+  onNavigate: (
+    href: string,
+    tabId: string,
+    event: React.MouseEvent<HTMLAnchorElement>
+  ) => void;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ activeTab, setActiveTab, onOpenBooking }) => {
+export const NavBar: React.FC<NavBarProps> = ({
+  activeTab,
+  onOpenBooking,
+  onNavigate,
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     { id: 'HOME', label: 'HOME', href: '/' },
     { id: 'ROBOTIC', label: 'ROBOTIC SURGERY', href: '/robotic-surgery' },
-    { id: 'TREATMENTS', label: 'TREATMENTS & SPECIALTIES', href: '/#treatments' },
+    { id: 'TREATMENTS', label: 'TREATMENTS & SPECIALTIES', href: '/treatments' },
     { id: 'LOCATIONS', label: 'LOCATIONS', href: '/#clinics' },
     { id: 'PATIENT_INFO', label: 'FAQS', href: '/#faqs' },
     { id: 'CONTACT', label: 'CONTACT', href: '#' },
   ];
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, itemId: string) => {
-    setActiveTab(itemId);
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: typeof navItems[number]
+  ) => {
     // No dedicated Contact section exists yet — route straight to the
     // booking/enquiry modal instead of leaving a dead in-page anchor.
-    if (itemId === 'CONTACT') {
+    if (item.id === 'CONTACT') {
       e.preventDefault();
       onOpenBooking();
+      setMobileMenuOpen(false);
+      return;
     }
+
+    onNavigate(item.href, item.id, e);
   };
 
   return (
@@ -52,7 +66,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activeTab, setActiveTab, onOpenB
             <React.Fragment key={item.id}>
               <a
                 href={item.href}
-                onClick={(e) => handleNavClick(e, item.id)}
+                onClick={(e) => handleNavClick(e, item)}
                 className={`py-3.5 px-3 transition-colors relative uppercase ${
                   activeTab === item.id
                     ? 'text-[#0284c7] font-extrabold after:content-[""] after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#0284c7]'
@@ -92,7 +106,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activeTab, setActiveTab, onOpenB
                 key={item.id}
                 href={item.href}
                 onClick={(e) => {
-                  handleNavClick(e, item.id);
+                  handleNavClick(e, item);
                   setMobileMenuOpen(false);
                 }}
                 className={`block px-3 py-3 text-base font-bold tracking-[0.05em] rounded ${

@@ -60,7 +60,7 @@ export const patientTestimonials: PatientTestimonial[] = [
     quote:
       'The care was empathetic and detailed, with treatment plans explained clearly to the patient and family.',
     context: 'NHS patient feedback',
-    sourceLabel: 'Practice feedback file',
+    sourceLabel: 'IWantGreatCare via legacy website',
     tone: 'nhs-care',
   },
   {
@@ -105,4 +105,17 @@ export const patientTestimonials: PatientTestimonial[] = [
   },
 ];
 
-export const featuredPatientTestimonials = patientTestimonials.slice(0, 3);
+export const featuredPatientTestimonials: PatientTestimonial[] = [
+  patientTestimonials[0],
+  patientTestimonials[6],
+  patientTestimonials[1],
+  patientTestimonials[9],
+  patientTestimonials[2],
+  patientTestimonials[7],
+  patientTestimonials[3],
+  patientTestimonials[10],
+  patientTestimonials[4],
+  patientTestimonials[8],
+  patientTestimonials[5],
+  patientTestimonials[11],
+];

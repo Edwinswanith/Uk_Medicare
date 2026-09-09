@@ -10,6 +10,8 @@ package-lock.json.bak
 
 # Keep only application assets under public; generated image variants remain local.
 public/*
+!public/patient-feedback/
+!public/patient-feedback/*.jpg
 !public/hero_bg_davinci_sheth.png
 !public/robots.txt
 !public/sitemap.xml

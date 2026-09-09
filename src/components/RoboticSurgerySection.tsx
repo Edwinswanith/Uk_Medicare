@@ -1,15 +1,52 @@
 import React, { useState } from 'react';
+import { Crosshair, ScanSearch, Spline } from 'lucide-react';
 
 interface RoboticSurgerySectionProps {
   onOpenBooking?: () => void;
   onExploreRobotic?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
+const ROBOTIC_VIDEO_ID = 'Q__rvX_EEGQ';
+const ROBOTIC_VIDEO_EMBED_BASE_URL =
+  `https://www.youtube.com/embed/${ROBOTIC_VIDEO_ID}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+const ROBOTIC_VIDEO_WATCH_URL = `https://www.youtube.com/watch?v=${ROBOTIC_VIDEO_ID}`;
+
+const getRoboticVideoEmbedUrl = () => {
+  if (typeof window === 'undefined') {
+    return ROBOTIC_VIDEO_EMBED_BASE_URL;
+  }
+
+  const needsMutedAutoplay =
+    window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+
+  return needsMutedAutoplay
+    ? `${ROBOTIC_VIDEO_EMBED_BASE_URL}&mute=1`
+    : ROBOTIC_VIDEO_EMBED_BASE_URL;
+};
+
+const roboticBenefits = [
+  {
+    title: 'Enhanced precision',
+    description: 'Greater accuracy for complex procedures',
+    Icon: Crosshair,
+  },
+  {
+    title: 'Minimally invasive approach',
+    description: 'Smaller incisions, less pain and faster recovery',
+    Icon: Spline,
+  },
+  {
+    title: 'Advanced visualisation',
+    description: 'High-definition 3D imaging for superior surgical control',
+    Icon: ScanSearch,
+  },
+];
+
 export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
   onOpenBooking,
   onExploreRobotic,
 }) => {
-  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
   return (
     <section
@@ -80,88 +117,19 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
 
             {/* 3 Benefit Blocks: Side-by-side on desktop & tablet */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2 pb-2">
-
-              {/* Benefit 1: Enhanced precision */}
-              <div className="space-y-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-950/60">
-                  {/* Target / Precision Crosshair SVG */}
-                  <svg
-                    className="w-5 h-5 text-[#38bdf8]"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="9" />
-                    <circle cx="12" cy="12" r="3" />
-                    <line x1="12" y1="3" x2="12" y2="6" />
-                    <line x1="12" y1="18" x2="12" y2="21" />
-                    <line x1="3" y1="12" x2="6" y2="12" />
-                    <line x1="18" y1="12" x2="21" y2="12" />
-                  </svg>
+              {roboticBenefits.map(({ title, description, Icon }) => (
+                <div key={title} className="space-y-2.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sky-300/25 bg-white/[0.06] text-[#7dd3fc] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                    <Icon className="h-[19px] w-[19px]" strokeWidth={1.8} aria-hidden="true" />
+                  </div>
+                  <h3 className="font-sans text-[17px] font-semibold leading-snug text-white">
+                    {title}
+                  </h3>
+                  <p className="text-body-small text-sky-100/90">
+                    {description}
+                  </p>
                 </div>
-                <h3 className="font-sans text-[17px] font-semibold leading-snug text-white">
-                  Enhanced precision
-                </h3>
-                <p className="text-body-small text-sky-100/90">
-                  Greater accuracy for complex procedures
-                </p>
-              </div>
-
-              {/* Benefit 2: Minimally invasive approach */}
-              <div className="space-y-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-950/60">
-                  {/* Scalpel / Micro-incision Instrument SVG */}
-                  <svg
-                    className="w-5 h-5 text-[#38bdf8]"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14.5 4L20 9.5L9.5 20H4V14.5L14.5 4Z" />
-                    <path d="M13 5.5L18.5 11" />
-                    <circle cx="7" cy="17" r="0.75" fill="currentColor" />
-                  </svg>
-                </div>
-                <h3 className="font-sans text-[17px] font-semibold leading-snug text-white">
-                  Minimally invasive approach
-                </h3>
-                <p className="text-body-small text-sky-100/90">
-                  Smaller incisions, less pain and faster recovery
-                </p>
-              </div>
-
-              {/* Benefit 3: Advanced visualisation */}
-              <div className="space-y-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-950/60">
-                  {/* High-Definition 3D Monitor / Console SVG */}
-                  <svg
-                    className="w-5 h-5 text-[#38bdf8]"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="2" y="3" width="20" height="14" rx="2" />
-                    <path d="M8 21h8" />
-                    <path d="M12 17v4" />
-                    <path d="M6 10l3-3 3 3 6-5" />
-                  </svg>
-                </div>
-                <h3 className="font-sans text-[17px] font-semibold leading-snug text-white">
-                  Advanced visualisation
-                </h3>
-                <p className="text-body-small text-sky-100/90">
-                  High-definition 3D imaging for superior surgical control
-                </p>
-              </div>
+              ))}
 
             </div>
 
@@ -178,17 +146,6 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
                 <span className="text-[18px] group-hover:translate-x-1 transition-transform">-&gt;</span>
               </a>
 
-              {/* Discreet Trust Indicator featuring team photo thumbnail */}
-              <div className="text-meta flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sky-100/90">
-                <img
-                  src="/images/sheth_robotic_surgical_team.png"
-                  alt="Ealing Hospital Robotic Surgical Team"
-                  className="w-6 h-6 rounded-full object-cover ring-1 ring-sky-400/40"
-                />
-                <span className="font-medium text-slate-200">
-                  NHS National Record Team
-                </span>
-              </div>
             </div>
 
           </div>
@@ -202,22 +159,16 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
             <div className="group relative w-full overflow-hidden rounded-lg border border-white/15 bg-slate-950 shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
 
               <div className="relative aspect-video w-full bg-[#050c18] overflow-hidden">
-                {!isPlayingVideo ? (
+                {!videoSrc ? (
                   /* ==============================================
                      Mockup-Styled Video Poster with Play Action
                      Matches media_1788736074226.png reference
                      ============================================== */
-                  <div
-                    onClick={() => setIsPlayingVideo(true)}
-                    className="relative w-full h-full cursor-pointer select-none group"
-                    role="button"
+                  <button
+                    type="button"
+                    onClick={() => setVideoSrc(getRoboticVideoEmbedUrl())}
+                    className="relative block h-full w-full cursor-pointer touch-manipulation select-none text-left group"
                     aria-label="Play video: Ealing Hospital breaks national record for robotic surgeries"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        setIsPlayingVideo(true);
-                      }
-                    }}
                   >
                     {/* Background Poster: Official NHS YouTube broadcast footage */}
                     <img
@@ -287,7 +238,7 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
                         </svg>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ) : (
                   /* ==============================================
                      Active YouTube Responsive Iframe Player
@@ -295,9 +246,10 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
                      ============================================== */
                   <iframe
                     className="w-full h-full"
-                    src="https://www.youtube.com/embed/Q__rvX_EEGQ?autoplay=1&rel=0"
+                    src={videoSrc}
                     title="Watch: Ealing Hospital breaks national record for robotic surgeries"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
                   />
                 )}
@@ -313,6 +265,14 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
               <p className="text-caption text-sky-200">
                 Featuring the Ealing Hospital robotic surgery programme.
               </p>
+              <a
+                href={ROBOTIC_VIDEO_WATCH_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-caption inline-flex font-semibold text-[#7dd3fc] underline-offset-4 transition hover:text-white hover:underline sm:hidden"
+              >
+                Open video on YouTube
+              </a>
             </div>
 
             {/* Bottom Accent line: PATIENT-FOCUSED. TECHNOLOGY-DRIVEN. BETTER OUTCOMES. */}

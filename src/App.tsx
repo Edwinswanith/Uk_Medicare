@@ -5,6 +5,7 @@ import { HeroSection } from './components/HeroSection';
 import { StatsCounterBar } from './components/StatsCounterBar';
 import { CredibilityLogoTicker } from './components/CredibilityLogoTicker';
 import { TreatmentsCarousel } from './components/TreatmentsCarousel';
+import { TreatmentDetailsPage } from './components/TreatmentDetailsPage';
 import { RoboticSurgerySection } from './components/RoboticSurgerySection';
 import { RoboticTestimonialsSection } from './components/RoboticTestimonialsSection';
 import { RoboticSurgeryExplainerSection } from './components/RoboticSurgeryExplainerSection';
@@ -16,9 +17,15 @@ import { ConsultationModal } from './components/ConsultationModal';
 import { ProfileModal } from './components/ProfileModal';
 import { SubmitTestimonialPage } from './components/SubmitTestimonialPage';
 
-type PagePath = '/' | '/robotic-surgery' | '/robotic-surgery/compare' | '/submit-testimonial';
+type PagePath =
+  | '/'
+  | '/treatments'
+  | '/robotic-surgery'
+  | '/robotic-surgery/compare'
+  | '/submit-testimonial';
 
 const HOME_PATH: PagePath = '/';
+const TREATMENTS_PATH: PagePath = '/treatments';
 const ROBOTIC_SURGERY_PATH: PagePath = '/robotic-surgery';
 const ROBOTIC_COMPARISON_PATH: PagePath = '/robotic-surgery/compare';
 const SUBMIT_TESTIMONIAL_PATH: PagePath = '/submit-testimonial';
@@ -28,6 +35,7 @@ const SITE_TITLE =
 const getCurrentPath = (): PagePath => {
   const path = window.location.pathname.replace(/\/+$/, '') || HOME_PATH;
 
+  if (path === TREATMENTS_PATH) return TREATMENTS_PATH;
   if (path === ROBOTIC_SURGERY_PATH) return ROBOTIC_SURGERY_PATH;
   if (path === ROBOTIC_COMPARISON_PATH) return ROBOTIC_COMPARISON_PATH;
   if (path === SUBMIT_TESTIMONIAL_PATH) return SUBMIT_TESTIMONIAL_PATH;
@@ -36,7 +44,13 @@ const getCurrentPath = (): PagePath => {
 };
 
 const getActiveTabForPath = (path: PagePath) => (
-  path === HOME_PATH ? 'HOME' : path === SUBMIT_TESTIMONIAL_PATH ? 'PATIENT_INFO' : 'ROBOTIC'
+  path === HOME_PATH
+    ? 'HOME'
+    : path === TREATMENTS_PATH
+      ? 'TREATMENTS'
+      : path === SUBMIT_TESTIMONIAL_PATH
+        ? 'PATIENT_INFO'
+        : 'ROBOTIC'
 );
 
 const shouldUseNativeLink = (event: React.MouseEvent<HTMLAnchorElement>) =>
@@ -47,6 +61,33 @@ const shouldUseNativeLink = (event: React.MouseEvent<HTMLAnchorElement>) =>
   event.ctrlKey ||
   event.shiftKey;
 
+const getRouteFromHref = (href: string): { path: PagePath; hash?: string } | null => {
+  const [pathPart, hashPart] = href.split('#');
+  const normalizedPath = (pathPart || HOME_PATH).replace(/\/+$/, '') || HOME_PATH;
+
+  if (normalizedPath === HOME_PATH) {
+    return { path: HOME_PATH, hash: hashPart || undefined };
+  }
+
+  if (normalizedPath === TREATMENTS_PATH) {
+    return { path: TREATMENTS_PATH, hash: hashPart || undefined };
+  }
+
+  if (normalizedPath === ROBOTIC_SURGERY_PATH) {
+    return { path: ROBOTIC_SURGERY_PATH, hash: hashPart || undefined };
+  }
+
+  if (normalizedPath === ROBOTIC_COMPARISON_PATH) {
+    return { path: ROBOTIC_COMPARISON_PATH, hash: hashPart || undefined };
+  }
+
+  if (normalizedPath === SUBMIT_TESTIMONIAL_PATH) {
+    return { path: SUBMIT_TESTIMONIAL_PATH, hash: hashPart || undefined };
+  }
+
+  return null;
+};
+
 export function App() {
   const [currentPath, setCurrentPath] = useState<PagePath>(() => getCurrentPath());
   const [activeTab, setActiveTab] = useState<string>(() => getActiveTabForPath(getCurrentPath()));
@@ -54,6 +95,7 @@ export function App() {
   const [profileModalOpen, setProfileModalOpen] = useState<boolean>(false);
   const [selectedProcedure, setSelectedProcedure] = useState<string>('');
   const [selectedClinicId, setSelectedClinicId] = useState<string | undefined>();
+  const [focusedClinicId, setFocusedClinicId] = useState<string | undefined>();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -68,13 +110,48 @@ export function App() {
     setActiveTab(getActiveTabForPath(currentPath));
 
     document.title =
-      currentPath === ROBOTIC_SURGERY_PATH
+      currentPath === TREATMENTS_PATH
+        ? `Treatments & Specialities | ${SITE_TITLE}`
+        : currentPath === ROBOTIC_SURGERY_PATH
         ? `Robotic Surgery | ${SITE_TITLE}`
         : currentPath === ROBOTIC_COMPARISON_PATH
           ? `Compare Surgical Approaches | ${SITE_TITLE}`
           : currentPath === SUBMIT_TESTIMONIAL_PATH
             ? `Submit Your Testimonial | ${SITE_TITLE}`
           : SITE_TITLE;
+  }, [currentPath]);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, '');
+    if (!hash) return;
+
+    let attempts = 0;
+    let timer: number | undefined;
+
+    const scrollToHashTarget = () => {
+      const target = document.getElementById(hash);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'auto',
+          block: 'start',
+        });
+        return;
+      }
+
+      attempts += 1;
+      if (attempts < 20) {
+        timer = window.setTimeout(scrollToHashTarget, 100);
+      }
+    };
+
+    timer = window.setTimeout(scrollToHashTarget, 50);
+
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
   }, [currentPath]);
 
   const handleOpenBooking = (procedureName?: string, clinicId?: string) => {
@@ -91,16 +168,65 @@ export function App() {
     setProfileModalOpen(true);
   };
 
+  const handleViewClinic = (clinicId: string) => {
+    setProfileModalOpen(false);
+    setFocusedClinicId(clinicId);
+    goToPage(HOME_PATH, 'clinics');
+  };
+
+  const goToPage = (path: PagePath, hash?: string) => {
+    window.history.pushState({}, '', `${path}${hash ? `#${hash}` : ''}`);
+    setCurrentPath(path);
+
+    window.setTimeout(() => {
+      if (hash) {
+        document.getElementById(hash)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+        return;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  };
+
   const navigateToPage = (path: PagePath) => (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (shouldUseNativeLink(event)) return;
 
     event.preventDefault();
-    window.history.pushState({}, '', path);
-    setCurrentPath(path);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    goToPage(path);
+  };
+
+  const handleNavNavigate = (
+    href: string,
+    tabId: string,
+    event: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    if (shouldUseNativeLink(event)) return;
+
+    const route = getRouteFromHref(href);
+    if (!route) return;
+
+    event.preventDefault();
+    setActiveTab(tabId);
+    goToPage(route.path, route.hash);
+
+    window.setTimeout(() => {
+      setActiveTab(tabId);
+    }, 0);
   };
 
   const renderMainContent = () => {
+    if (currentPath === TREATMENTS_PATH) {
+      return (
+        <TreatmentDetailsPage
+          onBackHome={navigateToPage(HOME_PATH)}
+          onOpenBooking={handleOpenBooking}
+        />
+      );
+    }
+
     if (currentPath === ROBOTIC_SURGERY_PATH) {
       return (
         <>
@@ -142,7 +268,10 @@ export function App() {
         <StatsCounterBar />
         <CredibilityLogoTicker />
 
-        <TreatmentsCarousel onSelectTreatment={handleOpenBooking} />
+        <TreatmentsCarousel
+          onViewAllTreatments={() => goToPage(TREATMENTS_PATH)}
+          onViewTreatment={(treatmentId) => goToPage(TREATMENTS_PATH, treatmentId)}
+        />
 
         <RoboticSurgerySection
           onOpenBooking={() => handleOpenBooking('Robotic Surgery')}
@@ -151,7 +280,11 @@ export function App() {
 
         <RoboticTestimonialsSection onSubmitTestimonial={navigateToPage(SUBMIT_TESTIMONIAL_PATH)} />
 
-        <ClinicLocations onOpenBooking={(clinicId) => handleOpenBooking(undefined, clinicId)} />
+        <ClinicLocations
+          focusedClinicId={focusedClinicId}
+          onFocusedClinicHandled={() => setFocusedClinicId(undefined)}
+          onOpenBooking={(clinicId) => handleOpenBooking(undefined, clinicId)}
+        />
 
         <AeoFaqSection />
       </>
@@ -164,8 +297,8 @@ export function App() {
 
       <NavBar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
         onOpenBooking={() => handleOpenBooking()}
+        onNavigate={handleNavNavigate}
       />
 
       <main className="flex-grow min-w-0 w-full overflow-x-hidden">
@@ -184,10 +317,11 @@ export function App() {
       <ProfileModal
         isOpen={profileModalOpen}
         onClose={() => setProfileModalOpen(false)}
-        onOpenBooking={() => {
+        onOpenBooking={(clinicId) => {
           setProfileModalOpen(false);
-          handleOpenBooking();
+          handleOpenBooking(undefined, clinicId);
         }}
+        onViewClinic={handleViewClinic}
       />
     </div>
   );
