@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Globe2, Loader2, LocateFixed, MapPin, Minus, Plus } from 'lucide-react';
+import { Globe2, Loader2, LocateFixed, MapPin } from 'lucide-react';
 import {
   ClinicAvailabilityFilter,
   ClinicLocation,
@@ -10,7 +10,7 @@ import {
 } from '../../data/clinics';
 import { LocationDetailStrip } from './LocationDetailStrip';
 import { LocationSelector } from './LocationSelector';
-import { StaticLocationMapPreview } from './StaticLocationMapPreview';
+import { GoogleMapsEmbedPreview } from './GoogleMapsEmbedPreview';
 import { loadGoogleMaps } from './googleMapsLoader';
 import {
   GOOGLE_MAP_OPTIONS,
@@ -36,7 +36,6 @@ interface InteractiveLocationsMapProps {
 }
 
 type MapLoadState = 'idle' | 'loading' | 'ready' | 'missing-key' | 'error';
-type MarkerMapRole = 'main' | 'inset';
 
 const getAccessibleMarkerLabel = (clinic: ClinicLocation) =>
   `${clinic.name}, ${clinic.area}`;
@@ -123,9 +122,7 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
 }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const mapElementRef = useRef<HTMLDivElement | null>(null);
-  const insetMapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any | null>(null);
-  const insetMapRef = useRef<any | null>(null);
   const markerLibraryRef = useRef<{ AdvancedMarkerElement: any; PinElement: any } | null>(null);
   const markersRef = useRef<Map<string, any[]>>(new Map());
   const cameraTimersRef = useRef<number[]>([]);
@@ -169,14 +166,8 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
     cameraTimersRef.current.push(timer);
   }, []);
 
-  const registerMarker = (
-    clinicId: string,
-    marker: any,
-    showLabel: boolean,
-    mapRole: MarkerMapRole
-  ) => {
+  const registerMarker = (clinicId: string, marker: any, showLabel: boolean) => {
     marker.__showLabel = showLabel;
-    marker.__mapRole = mapRole;
     const existingMarkers = markersRef.current.get(clinicId) ?? [];
     existingMarkers.push(marker);
     markersRef.current.set(clinicId, existingMarkers);
@@ -193,16 +184,13 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
         const isVisible = nextVisibleClinicIds.has(clinic.id);
 
         clinicMarkers.forEach((marker) => {
-          marker.map = isVisible
-            ? marker.__mapRole === 'inset'
-              ? insetMapRef.current
-              : mapRef.current
-            : null;
+          const shouldShowLabel = Boolean(marker.__showLabel) || isSelected;
+          marker.map = isVisible ? mapRef.current : null;
           marker.content = createMarkerContent(
             PinElement,
             clinic,
             isSelected,
-            Boolean(marker.__showLabel)
+            shouldShowLabel
           );
           marker.zIndex = isSelected ? 100 : 10;
           marker.title = getAccessibleMarkerLabel(clinic);
@@ -215,15 +203,9 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
   const focusClinicGroup = useCallback(
     (targetClinics: ClinicLocation[]) => {
       const map = mapRef.current;
-      const insetMap = insetMapRef.current;
       const focusedClinics = targetClinics.length > 0 ? targetClinics : clinics;
       const center = getClinicsCenter(focusedClinics);
       const zoom = getGroupZoom(focusedClinics.length);
-
-      if (insetMap) {
-        insetMap.panTo(center);
-        insetMap.setZoom(focusedClinics.length <= 1 ? 13 : 11);
-      }
 
       if (!map) return;
 
@@ -245,15 +227,9 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
   const moveToClinic = useCallback(
     (clinic: ClinicLocation) => {
       const map = mapRef.current;
-      const insetMap = insetMapRef.current;
       const target = getClinicLatLng(clinic);
 
       clearCameraTimers();
-
-      if (insetMap) {
-        insetMap.panTo(target);
-        insetMap.setZoom(12);
-      }
 
       if (!map) return;
 
@@ -324,7 +300,6 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
 
   const viewAllLocations = useCallback(() => {
     const map = mapRef.current;
-    const insetMap = insetMapRef.current;
     const nextSelectedClinicId = selectedClinicId ?? firstClinicId;
 
     setAvailabilityFilter('all');
@@ -334,11 +309,6 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
     setAnnouncement('Showing London and Hertfordshire consultation locations.');
 
     const regionalCenter = getClinicsCenter(clinics);
-
-    if (insetMap) {
-      insetMap.setCenter(regionalCenter);
-      insetMap.setZoom(11);
-    }
 
     if (!map) return;
 
@@ -384,14 +354,6 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
     queueCameraStep(() => map.setZoom(Math.max(REGIONAL_VIEW.zoom - 1, UK_VIEW.zoom)), 150);
     queueCameraStep(() => map.setZoom(UK_VIEW.zoom), 430);
   }, [clearCameraTimers, queueCameraStep, updateMarkerStyles, visibleClinicIds]);
-
-  const changeZoom = useCallback((direction: 'in' | 'out') => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    const currentZoom = map.getZoom?.() ?? REGIONAL_VIEW.zoom;
-    map.setZoom(direction === 'in' ? currentZoom + 1 : currentZoom - 1);
-  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -451,22 +413,11 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
 
         mapRef.current = map;
 
-        if (insetMapElementRef.current && window.innerWidth >= 1024) {
-          insetMapRef.current = new GoogleMap(insetMapElementRef.current, {
-            ...GOOGLE_MAP_OPTIONS,
-            center: getClinicsCenter(clinics),
-            clickableIcons: false,
-            gestureHandling: 'none',
-            mapId: GOOGLE_MAPS_MAP_ID,
-            zoom: 11,
-          });
-        }
-
         clinics.forEach((clinic) => {
           const isSelected = clinic.id === selectedClinicId;
           const isVisible = visibleClinicIds.has(clinic.id);
           const marker = new AdvancedMarkerElement({
-            content: createMarkerContent(PinElement, clinic, isSelected, false),
+            content: createMarkerContent(PinElement, clinic, isSelected, isSelected),
             gmpClickable: true,
             map: isVisible ? map : null,
             position: getClinicLatLng(clinic),
@@ -480,26 +431,7 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
             marker.addEventListener?.('gmp-click', () => handleSelectClinic(clinic));
           }
 
-          registerMarker(clinic.id, marker, false, 'main');
-
-          if (insetMapRef.current) {
-            const insetMarker = new AdvancedMarkerElement({
-              content: createMarkerContent(PinElement, clinic, isSelected, true),
-              gmpClickable: true,
-              map: isVisible ? insetMapRef.current : null,
-              position: getClinicLatLng(clinic),
-              title: getAccessibleMarkerLabel(clinic),
-              zIndex: isSelected ? 100 : 10,
-            });
-
-            if (typeof insetMarker.addListener === 'function') {
-              insetMarker.addListener('click', () => handleSelectClinic(clinic));
-            } else {
-              insetMarker.addEventListener?.('gmp-click', () => handleSelectClinic(clinic));
-            }
-
-            registerMarker(clinic.id, insetMarker, true, 'inset');
-          }
+          registerMarker(clinic.id, marker, false);
         });
 
         setLoadState('ready');
@@ -565,7 +497,6 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
       });
       markersRef.current.clear();
       mapRef.current = null;
-      insetMapRef.current = null;
     };
   }, [clearCameraTimers]);
 
@@ -661,11 +592,10 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
         <div className="mt-6">
           <div className="relative h-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-[#c6e0eb] shadow-[0_24px_72px_rgba(53,91,122,0.28)] sm:h-[610px] lg:h-[620px]">
             {loadState !== 'ready' && (
-              <StaticLocationMapPreview
+              <GoogleMapsEmbedPreview
                 clinics={visibleClinics}
                 mapMode={mapMode}
                 selectedClinicId={selectedClinicId}
-                onSelect={handleSelectClinic}
               />
             )}
 
@@ -676,18 +606,6 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
               }`}
               aria-label="Interactive Google Map showing Prof. Sheth consultation hospital locations"
             />
-
-            <div
-              className={`absolute right-[5%] top-9 z-10 hidden aspect-square w-[min(40vw,560px)] overflow-hidden rounded-full border-[7px] border-white/95 bg-white shadow-[0_28px_80px_rgba(15,23,42,0.22)] transition-opacity duration-300 lg:block ${
-                loadState === 'ready' && mapMode !== 'uk'
-                  ? 'opacity-100'
-                  : 'pointer-events-none opacity-0'
-              }`}
-              aria-hidden={mapMode === 'uk'}
-              aria-label="London and Hertfordshire consultation area"
-            >
-              <div ref={insetMapElementRef} className="h-full w-full" />
-            </div>
 
             <div className="pointer-events-none absolute left-3 right-3 top-3 z-30 flex flex-col gap-2 sm:left-5 sm:right-5 sm:top-5 md:flex-row md:items-start md:justify-between md:gap-3">
               <div className="pointer-events-auto grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
@@ -717,49 +635,36 @@ export const InteractiveLocationsMap: React.FC<InteractiveLocationsMapProps> = (
                   <span>UK overview</span>
                 </button>
               </div>
-
-              <div className="pointer-events-auto hidden overflow-hidden rounded-3xl border border-white/[0.85] bg-white/[0.92] shadow-[0_16px_34px_rgba(15,23,42,0.14)] backdrop-blur md:flex">
-                <button
-                  type="button"
-                  onClick={() => changeZoom('in')}
-                  className="flex h-14 w-14 items-center justify-center text-[#1b304d] transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="Zoom in"
-                  disabled={loadState !== 'ready'}
-                >
-                  <Plus className="h-5 w-5" />
-                </button>
-                <span className="my-3 w-px bg-slate-200" aria-hidden="true" />
-                <button
-                  type="button"
-                  onClick={() => changeZoom('out')}
-                  className="flex h-14 w-14 items-center justify-center text-[#1b304d] transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500 disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="Zoom out"
-                  disabled={loadState !== 'ready'}
-                >
-                  <Minus className="h-5 w-5" />
-                </button>
-              </div>
             </div>
 
-            {loadState !== 'ready' && (
-              <div className="text-caption absolute right-4 top-24 z-30 hidden rounded-full border border-white/70 bg-white/[0.88] px-3 py-1.5 font-extrabold uppercase tracking-[0.08em] text-[#596d87] shadow-sm backdrop-blur sm:block">
-                {loadState === 'loading' ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    Loading map
-                  </span>
-                ) : loadState === 'error' ? (
-                  'Google Maps unavailable'
-                ) : (
-                  'Static map preview'
-                )}
+            {selectedClinic && mapMode !== 'uk' && (
+              <div className="pointer-events-none absolute right-3 top-20 z-30 w-[calc(100%-1.5rem)] max-w-[340px] sm:right-5 sm:w-[340px] lg:top-5">
+                <div className="rounded-xl border border-white/80 bg-white/[0.94] px-4 py-3 shadow-[0_14px_32px_rgba(15,23,42,0.18)] backdrop-blur">
+                  <p className="text-caption font-extrabold uppercase text-red-500">
+                    {selectedClinic.area.split(',')[0]}
+                  </p>
+                  <p className="mt-1 font-serif text-[18px] font-bold leading-tight text-[#172943]">
+                    {selectedClinic.name}
+                  </p>
+                  <p className="text-form-help mt-1.5 text-[#5f7088]">
+                    {selectedClinic.address}, {selectedClinic.postcode}, UK
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {loadState === 'loading' && (
+              <div className="text-caption absolute right-4 top-24 z-30 hidden rounded-full border border-white/70 bg-white/[0.88] px-3 py-1.5 font-extrabold uppercase tracking-[0.08em] text-[#596d87] shadow-sm backdrop-blur sm:block lg:top-28">
+                <span className="inline-flex items-center gap-1.5">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Loading live map
+                </span>
               </div>
             )}
 
             <div className="absolute bottom-3 left-3 right-3 z-30 md:bottom-4 md:left-4 md:right-auto">
               <LocationSelector
                 clinics={visibleClinics}
-                activeFilter={availabilityFilter}
                 selectedClinicId={selectedClinicId}
                 onSelect={handleSelectClinic}
                 variant="overlay"

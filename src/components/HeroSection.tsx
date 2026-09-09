@@ -62,7 +62,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking, onViewP
             className="font-serif font-semibold text-white drop-shadow-sm pr-1"
             style={{
               fontFamily: '"Source Serif 4", Georgia, serif',
-              fontSize: 'clamp(52px, 4.8vw, 74px)',
+              fontSize: 'clamp(48px, 4.2vw, 64px)',
               lineHeight: '1',
               letterSpacing: '-0.025em',
             }}

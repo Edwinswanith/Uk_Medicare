@@ -4,7 +4,7 @@ import { allFaqs, faqCategories } from '../data/faqs';
 
 export const AeoFaqSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [openFaqId, setOpenFaqId] = useState<string>(allFaqs[0].id);
+  const [openFaqId, setOpenFaqId] = useState<string>('');
 
   const filteredFaqs = useMemo(() => (
     selectedCategory === 'all'
@@ -15,12 +15,8 @@ export const AeoFaqSection: React.FC = () => {
   const activeCategory = faqCategories.find((category) => category.id === selectedCategory);
 
   const selectCategory = (categoryId: string) => {
-    const nextFaqs = categoryId === 'all'
-      ? allFaqs
-      : allFaqs.filter((faq) => faq.category === categoryId);
-
     setSelectedCategory(categoryId);
-    setOpenFaqId(nextFaqs[0]?.id ?? '');
+    setOpenFaqId('');
   };
 
   const toggleFaq = (id: string) => {

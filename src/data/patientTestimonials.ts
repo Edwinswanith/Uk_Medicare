@@ -8,100 +8,100 @@ export interface PatientTestimonial {
 
 export const patientTestimonials: PatientTestimonial[] = [
   {
-    id: 'legacy-engineer-feedback',
+    id: 'patient-hernia-gratitude-feedback',
     quote:
-      'It was a privilege to give feedback. The treatment was thoughtful, skilled and followed by careful recovery support.',
-    context: 'Surgical care feedback',
-    sourceLabel: 'Legacy website review',
-    tone: 'surgery',
+      'My wife and I are immensely grateful for your treatment of my hernia. We cannot thank you enough for the kindness and thoughtfulness you showed us.',
+    context: 'Hernia treatment feedback',
+    sourceLabel: 'Practice feedback card',
+    tone: 'private-care',
   },
   {
-    id: 'legacy-endoscopy-feedback',
+    id: 'patient-gallbladder-gratitude-feedback',
     quote:
-      'A calm, empathetic approach made the procedure easier, with clear communication before and after treatment.',
-    context: 'Endoscopy feedback',
-    sourceLabel: 'Legacy website review',
-    tone: 'consultation',
-  },
-  {
-    id: 'legacy-cholecystectomy-feedback',
-    quote:
-      'Highly skilled, knowledgeable and reassuring throughout laparoscopic gallbladder surgery.',
+      'This is to express my gratitude and appreciation for looking after me and treating my gallbladder which was causing me much pain and anxiety.',
     context: 'Gallbladder surgery feedback',
-    sourceLabel: 'Legacy website review',
+    sourceLabel: 'Practice feedback letter',
     tone: 'surgery',
   },
   {
-    id: 'legacy-warm-surgeon-feedback',
+    id: 'patient-professional-surgery-feedback',
     quote:
-      'Excellent, warm, knowledgeable and approachable care. The experience left a strong recommendation.',
-    context: 'Patient review',
-    sourceLabel: 'Legacy website review',
-    tone: 'consultation',
-  },
-  {
-    id: 'legacy-thorough-operation-feedback',
-    quote:
-      'Professional and thorough from the beginning of the operation journey through to the end.',
-    context: 'Operation feedback',
-    sourceLabel: 'IWantGreatCare via legacy website',
+      'The surgery you performed successfully was done to the highest degree of professionalism.',
+    context: 'Surgery feedback',
+    sourceLabel: 'Practice feedback letter',
     tone: 'surgery',
   },
   {
-    id: 'legacy-explained-surgery-feedback',
+    id: 'patient-reassuring-qualities-feedback',
     quote:
-      'The condition and surgery were explained with care, patience and enough time for questions.',
-    context: 'Surgery planning feedback',
-    sourceLabel: 'IWantGreatCare via legacy website',
-    tone: 'consultation',
+      'The most important qualities you enjoy are kindness, patience and pleasantness. These qualities reassure the patient.',
+    context: 'Patient letter',
+    sourceLabel: 'Practice feedback letter',
+    tone: 'private-care',
   },
   {
-    id: 'local-nhs-2024-feedback',
+    id: 'patient-nhs-professionalism-feedback',
     quote:
-      'The care was empathetic and detailed, with treatment plans explained clearly to the patient and family.',
-    context: 'NHS patient feedback',
-    sourceLabel: 'IWantGreatCare via legacy website',
+      'Mr Sheth and his team are a great asset to the hospital and NHS. He carries himself with great professionalism, empathy and also takes time with every patient.',
+    context: 'NHS care feedback',
+    sourceLabel: 'Practice feedback file',
     tone: 'nhs-care',
   },
   {
-    id: 'local-symptom-free-feedback',
+    id: 'patient-family-communication-feedback',
     quote:
-      'Follow-up care and medication planning helped the patient feel reassured after a difficult admission.',
+      'He ensured that all the relevant tests and scans were done with feedback to me and my family always.',
     context: 'NHS follow-up feedback',
     sourceLabel: 'Practice feedback file',
-    tone: 'nhs-care',
-  },
-  {
-    id: 'local-ealing-team-feedback',
-    quote:
-      'The general surgery team were thanked for prompt action, treatment and attentive hospital care.',
-    context: 'Hospital team feedback',
-    sourceLabel: 'Practice feedback file',
-    tone: 'nhs-care',
-  },
-  {
-    id: 'local-gallbladder-letter-feedback',
-    quote:
-      'Gallbladder treatment was described with gratitude for professionalism, kindness and patience.',
-    context: 'Private patient letter',
-    sourceLabel: 'Practice feedback file',
-    tone: 'private-care',
-  },
-  {
-    id: 'local-card-caring-feedback',
-    quote:
-      'Handwritten card feedback repeatedly thanks the team for caring support during treatment and recovery.',
-    context: 'Thank-you card feedback',
-    sourceLabel: 'Practice feedback file',
-    tone: 'private-care',
-  },
-  {
-    id: 'local-card-reassurance-feedback',
-    quote:
-      'Several cards emphasise reassurance, kindness and clear explanations at moments when patients felt anxious.',
-    context: 'Thank-you card feedback',
-    sourceLabel: 'Practice feedback file',
     tone: 'consultation',
+  },
+  {
+    id: 'patient-surgery-aftercare-feedback',
+    quote:
+      'My sincere thanks for you and your team to look after me during my surgery and thereafter.',
+    context: 'Surgery aftercare feedback',
+    sourceLabel: 'Practice feedback card',
+    tone: 'surgery',
+  },
+  {
+    id: 'patient-family-explanation-feedback',
+    quote:
+      "Thank you so much for all you have done for my dad. You've been very open to explaining your decisions as well as the whole operation and how it went.",
+    context: 'Family feedback',
+    sourceLabel: 'Practice feedback card',
+    tone: 'consultation',
+  },
+  {
+    id: 'patient-london-consultation-feedback',
+    quote:
+      'Thanks so much for taking the time to see me, get my tests done and prioritising things for my short time in London.',
+    context: 'Consultation feedback',
+    sourceLabel: 'Practice feedback card',
+    tone: 'consultation',
+  },
+  {
+    id: 'patient-superb-care-feedback',
+    quote:
+      'Please accept this small thank you for the superb care you and your teams have given me during the past year.',
+    context: 'Hospital care feedback',
+    sourceLabel: 'Practice feedback file',
+    tone: 'nhs-care',
+  },
+  {
+    id: 'patient-team-kindness-feedback',
+    quote:
+      'The team has been approachable, efficient, kind and always helpful.',
+    context: 'Team feedback',
+    sourceLabel: 'Practice feedback file',
+    tone: 'nhs-care',
+  },
+  {
+    id: 'patient-wonderful-work-feedback',
+    quote:
+      'I wanted to thank you and all your team for your wonderful work and for saving my life.',
+    context: 'Patient thank-you card',
+    sourceLabel: 'Practice feedback card',
+    tone: 'private-care',
   },
 ];
 

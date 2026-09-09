@@ -30,33 +30,16 @@ export const GOOGLE_MAP_OPTIONS = {
   backgroundColor: '#eef2f6',
   clickableIcons: true,
   controlSize: 28,
-  disableDefaultUI: true,
-  fullscreenControl: false,
+  disableDefaultUI: false,
+  fullscreenControl: true,
   gestureHandling: 'cooperative',
-  keyboardShortcuts: false,
+  keyboardShortcuts: true,
   mapTypeControl: false,
   rotateControl: false,
-  scaleControl: false,
-  streetViewControl: false,
+  scaleControl: true,
+  streetViewControl: true,
   tilt: 0,
-  zoomControl: false,
-  styles: [
-    {
-      featureType: 'poi.business',
-      elementType: 'labels.icon',
-      stylers: [{ visibility: 'off' }],
-    },
-    {
-      featureType: 'transit.station',
-      elementType: 'labels.icon',
-      stylers: [{ visibility: 'simplified' }],
-    },
-    {
-      featureType: 'road',
-      elementType: 'geometry',
-      stylers: [{ saturation: -15 }, { lightness: 10 }],
-    },
-  ],
+  zoomControl: true,
 };
 
 export const getClinicLatLng = (clinic: ClinicLocation) => ({

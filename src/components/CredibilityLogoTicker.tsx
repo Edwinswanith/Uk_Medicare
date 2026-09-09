@@ -10,8 +10,8 @@ export const CredibilityLogoTicker: React.FC<CredibilityLogoTickerProps> = ({ co
 
   return (
     <section
-      className={`w-full overflow-hidden bg-white ${
-        compact ? 'border-y border-slate-200 py-4' : 'border-b border-slate-200 py-6 sm:py-8'
+      className={`w-full overflow-hidden bg-[#f8fbfd] ${
+        compact ? 'border-y border-slate-200 py-4' : 'py-6 sm:py-8'
       }`}
       aria-label="Professional affiliations and hospital logos"
     >

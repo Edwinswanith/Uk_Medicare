@@ -11,7 +11,7 @@ import {
   featuredPatientTestimonials,
   patientTestimonials,
 } from '../data/patientTestimonials';
-import { patientFeedbackCards } from '../data/patientFeedbackCards';
+import { getCleanedPatientTestimonials } from '../data/patientFeedbackCards';
 import { PatientFeedbackCardsGallery } from './PatientFeedbackCardsGallery';
 
 interface RoboticTestimonialsSectionProps {
@@ -68,6 +68,11 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
   const [modalOpen, setModalOpen] = useState(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const totalSlides = featuredPatientTestimonials.length;
+  const cleanedFeedbackTestimonials = getCleanedPatientTestimonials();
+  const cleanedFeedbackCardCount = cleanedFeedbackTestimonials.reduce(
+    (total, testimonial) => total + testimonial.pages.length,
+    0
+  );
 
   useEffect(() => {
     if (!modalOpen) return undefined;
@@ -161,6 +166,11 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
               <Star key={index} className="h-5 w-5 fill-current sm:h-6 sm:w-6" />
             ))}
           </div>
+
+          <p className="text-meta mt-3 text-teal-800">
+            <span className="font-extrabold text-teal-700">{cleanedFeedbackCardCount}+</span>
+            {' '}patient feedback cards shared
+          </p>
 
           <div
             className="mt-12 grid w-full items-center gap-4 lg:grid-cols-[44px_1fr_44px] lg:gap-6"
@@ -304,7 +314,11 @@ export const RoboticTestimonialsSection: React.FC<RoboticTestimonialsSectionProp
                   Patient Testimonials
                 </h3>
                 <p className="mt-2 text-sm text-sky-100">
-                  {patientTestimonials.length} message testimonials and {patientFeedbackCards.length} feedback card pages.
+                  {patientTestimonials.length} message testimonials
+                  {cleanedFeedbackTestimonials.length > 0
+                    ? ` and ${cleanedFeedbackTestimonials.length} cleaned feedback card testimonials`
+                    : ''}
+                  .
                 </p>
               </div>
 

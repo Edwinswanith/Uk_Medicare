@@ -20,6 +20,7 @@ export const NavBar: React.FC<NavBarProps> = ({
 
   const navItems = [
     { id: 'HOME', label: 'HOME', href: '/' },
+    { id: 'ABOUT', label: 'ABOUT', href: '/#about' },
     { id: 'ROBOTIC', label: 'ROBOTIC SURGERY', href: '/robotic-surgery' },
     { id: 'TREATMENTS', label: 'TREATMENTS & SPECIALTIES', href: '/treatments' },
     { id: 'LOCATIONS', label: 'LOCATIONS', href: '/#clinics' },
@@ -61,7 +62,7 @@ export const NavBar: React.FC<NavBarProps> = ({
             container, which clipped the last item at exactly 768px —
             the mobile hamburger pattern below now covers 768-1023px,
             where it already renders correctly with no clipping. */}
-        <div className="hidden xl:flex items-center justify-start space-x-1 sm:space-x-2 py-0 text-[15px] font-semibold tracking-[0.06em] text-slate-700">
+        <div className="hidden xl:flex items-center justify-center space-x-1 sm:space-x-2 py-0 text-[15px] font-semibold tracking-[0.06em] text-slate-700">
           {navItems.map((item, index) => (
             <React.Fragment key={item.id}>
               <a

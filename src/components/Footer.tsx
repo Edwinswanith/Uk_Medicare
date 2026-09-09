@@ -6,6 +6,7 @@ import { clinicLocations, getClinicAvailabilitySummary } from '../data/clinics';
 
 interface FooterProps {
   onOpenBooking: () => void;
+  onViewProfile: () => void;
 }
 
 /**
@@ -22,13 +23,13 @@ interface FooterProps {
  * item 24); that remains a documented release blocker, not something to
  * fabricate here.
  */
-export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenBooking, onViewProfile }) => {
   const displayName = getVerified(professionalIdentity.displayName);
   const workingTitle = getVerified(professionalIdentity.workingTitle);
   const verifiedPhone = getVerifiedContact(contactInfo.generalPhone);
 
-  const navLinks = [
-    { label: 'About Prof. Sheth', href: '#about' },
+  const navLinks: Array<{ label: string; href?: string; onClick?: () => void }> = [
+    { label: 'About Prof. Sheth', onClick: onViewProfile },
     { label: 'Robotic Surgery', href: '#robotic' },
     { label: 'Treatments & Specialties', href: '/treatments' },
     { label: 'Locations', href: '#clinics' },
@@ -72,11 +73,22 @@ export const Footer: React.FC<FooterProps> = ({ onOpenBooking }) => {
             </h4>
             <ul className="space-y-2 text-body-small text-slate-300">
               {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} className="hover:text-teal-300 transition flex items-center gap-1">
-                    <ChevronRight className="w-3 h-3 text-teal-500 shrink-0" />
-                    <span>{link.label}</span>
-                  </a>
+                <li key={link.label}>
+                  {link.onClick ? (
+                    <button
+                      type="button"
+                      onClick={link.onClick}
+                      className="hover:text-teal-300 transition flex items-center gap-1 text-left"
+                    >
+                      <ChevronRight className="w-3 h-3 text-teal-500 shrink-0" />
+                      <span>{link.label}</span>
+                    </button>
+                  ) : (
+                    <a href={link.href} className="hover:text-teal-300 transition flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-teal-500 shrink-0" />
+                      <span>{link.label}</span>
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

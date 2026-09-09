@@ -1,108 +1,154 @@
-import React, { useState } from 'react';
-import { Building2, ShieldCheck, ChevronDown } from 'lucide-react';
-import { aboutPositioning, credentialCategories, profileDetail } from '../data/about';
+import React from 'react';
+import { ArrowRight, CalendarCheck, ExternalLink, Languages, Stethoscope } from 'lucide-react';
+import {
+  legacyProfileIntro,
+  legacyProfileSections,
+} from '../data/legacyProfile';
+import { professionalIdentity, getVerified } from '../data/professionalIdentity';
 
-const CATEGORY_ICONS = [Building2, ShieldCheck];
+interface AboutSectionProps {
+  onOpenBooking: () => void;
+  onViewProfile: () => void;
+}
 
-export const AboutSection: React.FC = () => {
-  const [showQualifications, setShowQualifications] = useState(false);
+const getProfileBullets = (sectionTitle: string) =>
+  legacyProfileSections
+    .find((section) => section.title === sectionTitle)
+    ?.blocks.flatMap((block) => block.bullets ?? []) ?? [];
+
+export const AboutSection: React.FC<AboutSectionProps> = ({
+  onOpenBooking,
+  onViewProfile,
+}) => {
+  const clinicalInterests = getProfileBullets('Clinical Interests');
+  const memberships = getVerified(professionalIdentity.memberships) ?? [];
+  const languages = getVerified(professionalIdentity.languages) ?? [];
+  const nhsRole = getVerified(professionalIdentity.nhsRole);
 
   return (
-    <section id="about" className="py-20 lg:py-24 bg-white text-slate-800 border-t border-slate-200">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-
-          {/* LEFT: Positioning copy */}
-          <div className="lg:col-span-7 space-y-5">
-            <div>
-              <p className="text-eyebrow text-teal-700">
-                {aboutPositioning.eyebrow}
-              </p>
-              <div className="w-10 h-[2px] bg-teal-600 mt-2 rounded-full" />
-            </div>
-
-            <h2 className="text-section-title text-navy-900">
-              {aboutPositioning.heading}
+    <section id="about" className="bg-[#f8fbfd] py-16 text-slate-800 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_380px] lg:items-start">
+          <div>
+            <p className="text-eyebrow text-[#0284c7]">
+              Professional Profile
+            </p>
+            <h2 className="mt-3 font-serif text-[40px] font-bold leading-tight text-navy-900 sm:text-[54px]">
+              {legacyProfileIntro.name}
             </h2>
-
-            <p className="text-meta font-semibold text-slate-500 uppercase tracking-[0.08em]">
-              {aboutPositioning.workingTitle}
+            <p className="mt-3 text-body font-extrabold uppercase tracking-[0.08em] text-[#294363]">
+              {legacyProfileIntro.title}
+            </p>
+            <p className="mt-2 text-body-small font-bold uppercase tracking-[0.12em] text-teal-700">
+              {legacyProfileIntro.subtitle}
             </p>
 
-            <p className="text-body text-slate-600 max-w-xl">
-              {aboutPositioning.statement}
-            </p>
-
-            {/* Credential category labels */}
-            <div className="flex flex-wrap gap-3 pt-1">
-              {credentialCategories.map((label, idx) => {
-                const Icon = CATEGORY_ICONS[idx];
-                return (
-                  <span
-                    key={label}
-                    className="text-body-small inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-50 border border-slate-200 font-semibold text-navy-900"
-                  >
-                    <Icon className="w-4 h-4 text-teal-600" />
-                    {label}
-                  </span>
-                );
-              })}
+            <div className="mt-7 grid gap-4 lg:grid-cols-3">
+              {legacyProfileIntro.summary.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-body-small text-slate-700"
+                >
+                  {paragraph}
+                </p>
+              ))}
             </div>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-3">
-              <a
-                href="#treatments"
-                className="text-button inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-semibold transition-colors"
+            <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)]">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-teal-700" />
+                  <h3 className="font-serif text-[28px] font-bold leading-tight text-navy-900">
+                    Specialist in Upper GI &amp; HPB Surgery
+                  </h3>
+                </div>
+
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {clinicalInterests.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-body-small font-bold text-slate-700"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 rounded-lg border border-slate-200 bg-[#f8fbfd] p-5">
+                {nhsRole && (
+                  <div>
+                    <p className="text-eyebrow text-sky-700">NHS role</p>
+                    <p className="mt-2 text-body-small font-semibold text-slate-700">
+                      {nhsRole}
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-eyebrow text-sky-700">Professional memberships</p>
+                  <p className="mt-2 text-body-small text-slate-700">
+                    {memberships.slice(0, 4).join(', ')}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-eyebrow flex items-center gap-1.5 text-sky-700">
+                    <Languages className="h-4 w-4" />
+                    <span>Languages spoken</span>
+                  </p>
+                  <p className="mt-2 text-body-small text-slate-700">
+                    {languages.join(', ')}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={onViewProfile}
+                className="text-button inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#294363] px-6 py-3 font-bold text-white transition hover:bg-[#1e3450] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
               >
-                View Conditions Treated
-              </a>
+                <ExternalLink className="h-4 w-4" />
+                <span>View complete profile</span>
+              </button>
 
               <button
                 type="button"
-                onClick={() => setShowQualifications((v) => !v)}
-                className="text-button inline-flex items-center gap-1.5 font-semibold text-teal-700 hover:text-teal-900 transition-colors"
+                onClick={onOpenBooking}
+                className="text-button inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 font-bold text-[#294363] transition hover:border-[#294363] hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-700"
               >
-                NHS Role &amp; Memberships
-                <ChevronDown className={`w-4 h-4 transition-transform ${showQualifications ? 'rotate-180' : ''}`} />
+                <CalendarCheck className="h-4 w-4" />
+                <span>Book consultation</span>
               </button>
             </div>
+          </div>
 
-            {/* NHS role, memberships, languages — verified content only */}
-            {showQualifications && (
-              <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-4 animate-fadeIn">
-                <div className="text-body-small grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-700">
-                  <div>
-                    <p className="font-semibold text-navy-900 mb-1">NHS role</p>
-                    <p>{profileDetail.nhsRole}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-navy-900 mb-1">Professional memberships</p>
-                    <ul className="space-y-0.5">
-                      {profileDetail.memberships.map((m) => (
-                        <li key={m}>{m}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-navy-900 mb-1">Languages spoken</p>
-                    <p>{profileDetail.languages.join(', ')}</p>
-                  </div>
-                </div>
+          <aside className="lg:sticky lg:top-28">
+            <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50 shadow-[0_18px_46px_rgba(15,23,42,0.08)]">
+              <img
+                src={legacyProfileIntro.portrait.src}
+                alt={legacyProfileIntro.portrait.alt}
+                className="h-[430px] w-full object-cover object-top"
+                loading="lazy"
+              />
+              <div className="border-t border-slate-200 bg-white p-5">
+                <p className="text-eyebrow text-[#0284c7]">Consultant profile</p>
+                <p className="mt-2 font-serif text-[25px] font-bold leading-tight text-navy-900">
+                  Upper GI, HPB, laparoscopic and robotic surgical care.
+                </p>
+                <button
+                  type="button"
+                  onClick={onViewProfile}
+                  className="text-button mt-4 inline-flex items-center gap-2 font-bold text-sky-700 transition hover:text-sky-900"
+                >
+                  <span>Open professional profile</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
-            )}
-          </div>
-
-          {/* RIGHT: Side card */}
-          <div className="lg:col-span-5">
-            <div className="rounded-2xl bg-slate-50 border border-slate-200 p-6 sm:p-7">
-              <p className="text-body-small text-slate-700">
-                {aboutPositioning.sideCard}
-              </p>
             </div>
-          </div>
-
+          </aside>
         </div>
       </div>
     </section>

@@ -12,6 +12,8 @@ package-lock.json.bak
 public/*
 !public/patient-feedback/
 !public/patient-feedback/*.jpg
+!public/patient-feedback-clean/
+!public/patient-feedback-clean/*.jpg
 !public/hero_bg_davinci_sheth.png
 !public/robots.txt
 !public/sitemap.xml

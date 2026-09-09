@@ -81,13 +81,7 @@ export const clinicAvailabilityFilters: {
     id: 'thursday',
     label: 'Thursday',
     shortLabel: 'Thu',
-    description: 'Show regular Thursday consultation clinics.',
-  },
-  {
-    id: 'alternate-thursday',
-    label: 'Alternate Thursday',
-    shortLabel: 'Alt Thu',
-    description: 'Show clinics available on alternate Thursdays only.',
+    description: 'Show clinics with Thursday consultation availability.',
   },
   {
     id: 'friday',
@@ -103,6 +97,10 @@ export const getClinicAvailability = (
 ) =>
   filter === 'all'
     ? clinic.availability
+    : filter === 'thursday'
+      ? clinic.availability.filter(
+          (period) => period.filter === 'thursday' || period.filter === 'alternate-thursday'
+        )
     : clinic.availability.filter((period) => period.filter === filter);
 
 export const hasClinicAvailabilityForFilter = (

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Crosshair, ScanSearch, Spline } from 'lucide-react';
 
 interface RoboticSurgerySectionProps {
   onOpenBooking?: () => void;
@@ -28,17 +27,14 @@ const roboticBenefits = [
   {
     title: 'Enhanced precision',
     description: 'Greater accuracy for complex procedures',
-    Icon: Crosshair,
   },
   {
     title: 'Minimally invasive approach',
     description: 'Smaller incisions, less pain and faster recovery',
-    Icon: Spline,
   },
   {
     title: 'Advanced visualisation',
     description: 'High-definition 3D imaging for superior surgical control',
-    Icon: ScanSearch,
   },
 ];
 
@@ -82,6 +78,14 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
 
+        {/* Eyebrow: ROBOTIC SURGERY with centered cyan underline */}
+        <div className="mb-10 flex flex-col items-center text-center">
+          <p className="text-xl font-bold text-[#38bdf8] sm:text-2xl">
+            ROBOTIC SURGERY
+          </p>
+          <div className="mt-2 h-[2px] w-10 rounded-full bg-[#38bdf8] shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
+        </div>
+
         {/* ========================================================
             2. TWO-COLUMN LAYOUT (DESKTOP: ~48% / 52%)
             Stacks vertically on mobile with text first, video second.
@@ -92,14 +96,6 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
               LEFT COLUMN: Copy, 3 Benefit Blocks, CTA
               ==================================================== */}
           <div className="lg:col-span-6 space-y-6 sm:space-y-7">
-
-            {/* Eyebrow: ROBOTIC SURGERY with cyan underline */}
-            <div>
-              <p className="text-eyebrow text-[#38bdf8]">
-                ROBOTIC SURGERY
-              </p>
-              <div className="w-10 h-[2px] bg-[#38bdf8] mt-2 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.7)]" />
-            </div>
 
             {/* Main Heading: Source Serif 4 */}
             <h2
@@ -117,11 +113,8 @@ export const RoboticSurgerySection: React.FC<RoboticSurgerySectionProps> = ({
 
             {/* 3 Benefit Blocks: Side-by-side on desktop & tablet */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2 pb-2">
-              {roboticBenefits.map(({ title, description, Icon }) => (
+              {roboticBenefits.map(({ title, description }) => (
                 <div key={title} className="space-y-2.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-sky-300/25 bg-white/[0.06] text-[#7dd3fc] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                    <Icon className="h-[19px] w-[19px]" strokeWidth={1.8} aria-hidden="true" />
-                  </div>
                   <h3 className="font-sans text-[17px] font-semibold leading-snug text-white">
                     {title}
                   </h3>

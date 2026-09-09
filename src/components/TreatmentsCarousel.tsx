@@ -14,7 +14,7 @@ export interface TreatmentCardData {
 const TREATMENTS: TreatmentCardData[] = [
   {
     id: 'gallbladder',
-    detailId: 'laparoscopic-cholecystectomy',
+    detailId: '/treatments/hpb/gallbladder-surgery',
     category: 'HEPATOBILIARY',
     title: 'Gallbladder & Gallstones',
     image: '/treatments/gallbladder-gallstones.jpg',
@@ -23,7 +23,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'reflux',
-    detailId: 'anti-reflux-surgery',
+    detailId: '/treatments/upper-gi/anti-reflux-surgery',
     category: 'UPPER GI',
     title: 'Reflux & Hiatus Hernia',
     image: '/treatments/reflux-hiatus-hernia.jpg',
@@ -32,7 +32,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'hernia',
-    detailId: 'laparoscopic-hernia-repair',
+    detailId: '/treatments/hernia/laparoscopic-hernia-surgery',
     category: 'HERNIA SURGERY',
     title: 'Hernia Repair',
     image: '/treatments/hernia-repair.jpg',
@@ -41,7 +41,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'liver-hpb',
-    detailId: 'laparoscopic-liver-surgery',
+    detailId: '/treatments/hpb/benign-liver-disease-surgery',
     category: 'HEPATOBILIARY',
     title: 'Liver & HPB Surgery',
     image: '/treatments/liver-hpb-surgery.jpg',
@@ -50,7 +50,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'endoscopy',
-    detailId: 'upper-gi-endoscopy',
+    detailId: '/treatments/upper-gi/endoscopy',
     category: 'DIAGNOSTICS',
     title: 'Upper GI Endoscopy',
     image: '/treatments/upper-gi-endoscopy.jpg',
@@ -59,7 +59,7 @@ const TREATMENTS: TreatmentCardData[] = [
   },
   {
     id: 'appendix',
-    detailId: 'laparoscopic-appendicectomy',
+    detailId: '/treatments/appendicectomy/laparoscopic-appendicectomy',
     category: 'GENERAL LAPAROSCOPIC SURGERY',
     title: 'Appendix & Laparoscopic Surgery',
     image: '/treatments/appendix-laparoscopic-surgery.jpg',
@@ -112,7 +112,7 @@ export const TreatmentsCarousel: React.FC<TreatmentsCarouselProps> = ({
   };
 
   return (
-    <section className="relative bg-[#F8FBFD] pt-16 sm:pt-20 pb-20 sm:pb-24 border-b border-slate-200/70 overflow-hidden select-none">
+    <section className="relative bg-[#F8FBFD] pt-16 sm:pt-20 pb-20 sm:pb-24 overflow-hidden select-none">
       
       {/* ========================================================
           5. SUBTLE LAYERED SILK/RIBBON WAVE BACKGROUND
