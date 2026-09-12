@@ -53,17 +53,17 @@ export const StatsCounterBar: React.FC = () => {
     () => [
       {
         id: 'surgeries',
-        value: 7000,
+        value: 5000,
         label: 'surgeries performed',
       },
       {
         id: 'robotic-procedures',
-        value: 100,
+        value: 50,
         label: 'robotic procedures',
       },
       {
         id: 'publications',
-        value: 50,
+        value: 35,
         label: 'research publications',
       },
       {

@@ -71,16 +71,29 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
   useEffect(() => {
     if (!isOverlay || !selectedClinicId) return;
 
-    const selectedCard = scrollerRef.current?.querySelector<HTMLElement>(
+    const scroller = scrollerRef.current;
+    const selectedCard = scroller?.querySelector<HTMLElement>(
       `[data-clinic-id="${selectedClinicId}"]`
     );
 
-    selectedCard?.scrollIntoView({
+    if (!scroller || !selectedCard) return;
+
+    // Keep the selected clinic visible without scrolling the page to the map.
+    const stripBounds = scroller.getBoundingClientRect();
+    const cardBounds = selectedCard.getBoundingClientRect();
+    const offset = cardBounds.left < stripBounds.left
+      ? cardBounds.left - stripBounds.left
+      : cardBounds.right > stripBounds.right
+        ? cardBounds.right - stripBounds.right
+        : 0;
+
+    if (offset === 0) return;
+
+    scroller.scrollBy({
+      left: offset,
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'
         : 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
     });
   }, [isOverlay, selectedClinicId]);
 
